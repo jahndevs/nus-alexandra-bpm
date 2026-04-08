@@ -3,7 +3,7 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-Data File/
+data/
 .DS_Store
 __pycache__/
 *.pyc
@@ -12,3 +12,4 @@ venv/
 node_modules/
 dist/
 *.local
+*.parquet
