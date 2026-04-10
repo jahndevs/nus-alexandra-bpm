@@ -6,6 +6,7 @@ import PageHeader from "./components/PageHeader";
 import PatientCard from "./components/PatientCard";
 import BloodPressureCard from "./components/BloodPressureCard";
 import BPHistoryCard from "./components/BPHistoryCard";
+import PPGChartCard from "./components/PPGChartCard";
 import PageAlert from "./components/PageAlert";
 import { patient, currentBP, history } from "./mockData";
 
@@ -50,6 +51,9 @@ const App: React.FC = () => {
                 )}
 
                 <Grid container spacing={2}>
+                    <Grid size={{ xs: 12 }}>
+                        <PPGChartCard />
+                    </Grid>
                     <Grid size={{ xs: 12, md: 6, lg: 4 }}>
                         <PatientCard patient={patient} />
                     </Grid>
