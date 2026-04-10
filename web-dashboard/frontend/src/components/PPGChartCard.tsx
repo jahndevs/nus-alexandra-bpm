@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import SectionHeader from "./SectionHeader";
 
 const PPG_COLOR = "#e74c3c";
 const POLL_INTERVAL = 100;
-const MAX_POINTS = 200;
 
 const PPGChartCard: React.FC = () => {
     const [values, setValues] = useState<number[]>([]);
@@ -19,7 +18,7 @@ const PPGChartCard: React.FC = () => {
                 .then((res) => {
                     const buf: number[] = res.data.values;
                     if (buf.length > 0) {
-                        setValues(buf.slice(-MAX_POINTS));
+                        setValues(buf);
                     }
                 })
                 .catch(() => {});
@@ -39,13 +38,22 @@ const PPGChartCard: React.FC = () => {
         <Card sx={{ height: "100%" }}>
             <CardContent sx={{ p: 2 }}>
                 <SectionHeader
-                    title="Raw PPG Signal"
+                    title="Live PPG Signal"
                 />
+                {values.length > 0 && (
+                    <Typography
+                        variant="h4"
+                        sx={{ fontWeight: 700, color: PPG_COLOR, mb: 1 }}
+                    >
+                        {values[values.length - 1]}
+                    </Typography>
+                )}
                 <Box>
                     {values.length > 1 ? (
                         <LineChart
                             height={280}
                             margin={{ left: 50, right: 20, top: 10, bottom: 30 }}
+                            skipAnimation
                             xAxis={[
                                 {
                                     scaleType: "point",

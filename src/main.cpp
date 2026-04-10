@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-#define PPG_PIN 4
+#define PPG_PIN 32
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
