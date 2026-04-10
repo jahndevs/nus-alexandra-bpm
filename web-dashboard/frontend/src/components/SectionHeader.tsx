@@ -1,29 +1,32 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { MONO } from "../theme";
 
-type Props = { index?: string; icon: React.ReactNode; title: string };
+type Props = { index?: string; icon?: React.ReactNode; title: string };
 
-const SectionHeader: React.FC<Props> = ({ index, icon, title }) => (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "text.secondary" }}>
-        {index && (
-            <Box
-                sx={{
-                    fontFamily: MONO,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "text.primary",
-                    border: "1.5px solid",
-                    borderColor: "text.primary",
-                    px: 0.75,
-                    py: 0.1,
-                }}
-            >
-                {index}
-            </Box>
-        )}
+const SectionHeader: React.FC<Props> = ({ icon, title }) => (
+    <Box
+        sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            color: "#555555",
+            pb: 1,
+            borderBottom: "1px solid #eeeeee",
+            mb: 1.5,
+        }}
+    >
         {icon}
-        <Typography variant="overline">{title}</Typography>
+        <Typography
+            sx={{
+                fontSize: 13,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.02em",
+                color: "#555555",
+            }}
+        >
+            {title}
+        </Typography>
     </Box>
 );
 

@@ -6,8 +6,8 @@ import PageHeader from "./components/PageHeader";
 import PatientCard from "./components/PatientCard";
 import BloodPressureCard from "./components/BloodPressureCard";
 import BPHistoryCard from "./components/BPHistoryCard";
+import PageAlert from "./components/PageAlert";
 import { patient, currentBP, history } from "./mockData";
-import { MONO } from "./theme";
 
 const App: React.FC = () => {
     const [message, setMessage] = useState<string>("");
@@ -25,24 +25,31 @@ const App: React.FC = () => {
                 display: "flex",
                 flexDirection: "column",
                 minHeight: "100svh",
+                bgcolor: "#f5f5f5",
             }}
         >
             <DashboardHeader />
 
-            <Box sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, maxWidth: 1400, width: "100%", mx: "auto" }}>
+            <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, maxWidth: 1280, width: "100%", mx: "auto" }}>
                 <PageHeader timestamp={currentBP.timestamp} />
+
+                <PageAlert
+                    severity="warning"
+                    title="High Blood Pressure Alert"
+                    message="182/110 mmHg recorded 2 minutes ago. Attention required!"
+                    details=""
+                />
 
                 {message && (
                     <Typography
                         variant="caption"
-                        color="text.secondary"
-                        sx={{ mb: 2, display: "block", fontFamily: MONO }}
+                        sx={{ mb: 2, display: "block", color: "#777777", fontSize: 11 }}
                     >
-                        ↳ {message}
+                        {message}
                     </Typography>
                 )}
 
-                <Grid container spacing={4}>
+                <Grid container spacing={2}>
                     <Grid size={{ xs: 12, md: 6, lg: 4 }}>
                         <PatientCard patient={patient} />
                     </Grid>

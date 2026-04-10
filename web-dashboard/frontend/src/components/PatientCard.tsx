@@ -1,8 +1,7 @@
 import React from "react";
-import { Avatar, Box, Card, CardContent, Divider, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import SectionHeader from "./SectionHeader";
-import { MONO } from "../theme";
 
 type Patient = {
     name: string;
@@ -13,35 +12,19 @@ type Patient = {
     weight: string;
 };
 
-const initials = (name: string) => name.split(" ").map(n => n[0]).join("");
-
 const PatientCard: React.FC<{ patient: Patient }> = ({ patient }) => (
     <Card sx={{ height: "100%" }}>
-        <CardContent sx={{ p: 3 }}>
-            <SectionHeader index="01" icon={<PersonIcon fontSize="small" />} title="Patient" />
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2.5 }}>
-                <Avatar
-                    sx={{
-                        bgcolor: "background.default",
-                        color: "text.primary",
-                        width: 56,
-                        height: 56,
-                        fontSize: 18,
-                        fontWeight: 800,
-                        fontFamily: MONO,
-                    }}
-                >
-                    {initials(patient.name)}
-                </Avatar>
-                <Box>
-                    <Typography variant="h5">{patient.name}</Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontFamily: MONO }}>
-                        ID · {patient.id}
-                    </Typography>
-                </Box>
+        <CardContent sx={{ p: 2 }}>
+            <SectionHeader icon={<PersonIcon sx={{ fontSize: 16 }} />} title="Patient Info" />
+            <Box sx={{ mb: 1.5 }}>
+                <Typography sx={{ fontSize: 16, fontWeight: 500, color: "#333333" }}>
+                    {patient.name}
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: "#777777" }}>
+                    Patient ID: {patient.id}
+                </Typography>
             </Box>
-            <Divider sx={{ my: 2.5, borderStyle: "dashed" }} />
-            <Stack spacing={1.25}>
+            <Stack spacing={0}>
                 <Row label="Age" value={`${patient.age}`} />
                 <Row label="Sex" value={patient.sex} />
                 <Row label="Height" value={patient.height} />
@@ -52,26 +35,18 @@ const PatientCard: React.FC<{ patient: Patient }> = ({ patient }) => (
 );
 
 const Row: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 1 }}>
-        <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ fontFamily: MONO, textTransform: "uppercase" }}
-        >
-            {label}
-        </Typography>
-        <Box
-            sx={{
-                flexGrow: 1,
-                borderBottom: "1px dotted",
-                borderColor: "text.secondary",
-                mx: 1,
-                mb: 0.4,
-            }}
-        />
-        <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: MONO }}>
-            {value}
-        </Typography>
+    <Box
+        sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 0.75,
+            borderBottom: "1px solid #f0f0f0",
+            "&:last-child": { borderBottom: "none" },
+        }}
+    >
+        <Typography sx={{ fontSize: 12, color: "#777777" }}>{label}</Typography>
+        <Typography sx={{ fontSize: 13, color: "#333333" }}>{value}</Typography>
     </Box>
 );
 

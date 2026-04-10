@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { MONO } from "../theme";
 
 type Props = { timestamp: string };
 
@@ -8,37 +7,25 @@ const PageHeader: React.FC<Props> = ({ timestamp }) => (
     <Box
         sx={{
             display: "flex",
-            alignItems: "flex-end",
+            alignItems: "center",
             justifyContent: "space-between",
-            mb: 3,
-            pb: 2,
-            borderBottom: "1.5px solid",
-            borderColor: "divider",
+            mb: 2.5,
+            pb: 1.5,
+            borderBottom: "1px solid #dddddd",
         }}
     >
-        <Box>
-            <Typography
-                variant="caption"
-                sx={{ fontFamily: MONO, color: "text.secondary", display: "block" }}
-            >
-                № 001 — REAL-TIME PATIENT VITALS
-            </Typography>
-            <Typography variant="h4" sx={{ mt: 0.5, fontWeight: 800, letterSpacing: "-0.03em" }}>
-                Dashboard
-                <Box component="span" sx={{ color: "secondary.main" }}>
-                    .
-                </Box>
-            </Typography>
-        </Box>
+        <Typography variant="h4" sx={{ fontWeight: 400, fontSize: 22, color: "#333333" }}>
+            Patient Details
+        </Typography>
         <Typography
             variant="caption"
             sx={{
-                fontFamily: MONO,
-                color: "text.secondary",
+                color: "#777777",
+                fontSize: 12,
                 display: { xs: "none", sm: "block" },
             }}
         >
-            {new Date().toISOString().slice(0, 10)} · {timestamp}
+            Last updated: 17/04/2026 14:35:22
         </Typography>
     </Box>
 );

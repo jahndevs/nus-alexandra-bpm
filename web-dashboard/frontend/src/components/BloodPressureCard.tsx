@@ -1,8 +1,6 @@
 import React from "react";
-import { Box, Card, CardContent, Chip, Divider, Typography } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import SectionHeader from "./SectionHeader";
-import { MONO } from "../theme";
 
 type BPReading = {
     systolic: number;
@@ -12,123 +10,113 @@ type BPReading = {
 };
 
 const classifyBP = (sys: number, dia: number) => {
-    if (sys >= 140 || dia >= 90) return { label: "Hypertension", tone: "error" as const };
+    if (sys >= 140 || dia >= 90) return { label: "High", tone: "error" as const };
     if (sys >= 130 || dia >= 80) return { label: "Elevated", tone: "warning" as const };
     return { label: "Normal", tone: "success" as const };
 };
 
-const TONE_BG = { success: "#dcfce7", warning: "#ffedd5", error: "#fee2e2" };
-const TONE_FG = { success: "#15803d", warning: "#c2410c", error: "#b91c1c" };
+const TONE_BG = { success: "#dff0d8", warning: "#fcf8e3", error: "#f2dede" };
+const TONE_FG = { success: "#3c763d", warning: "#8a6d3b", error: "#a94442" };
+const TONE_BORDER = { success: "#d6e9c6", warning: "#faebcc", error: "#ebccd1" };
 
 const BloodPressureCard: React.FC<{ reading: BPReading }> = ({ reading }) => {
     const status = classifyBP(reading.systolic, reading.diastolic);
     return (
-        <Card
-            sx={{
-                height: "100%",
-                position: "relative",
-                overflow: "hidden",
-                "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 6,
-                    background:
-                        "linear-gradient(90deg, #1d4ed8 0%, #3b82f6 50%, #fb923c 75%, #ea580c 100%)",
-                },
-            }}
-        >
-            <CardContent sx={{ p: 3, pt: 3.5 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <SectionHeader
-                        index="02"
-                        icon={<FavoriteIcon fontSize="small" />}
-                        title="Blood Pressure"
-                    />
-                    <Chip
-                        label={status.label}
-                        size="small"
-                        sx={{
-                            fontWeight: 700,
-                            bgcolor: TONE_BG[status.tone],
-                            color: TONE_FG[status.tone],
-                        }}
-                    />
-                </Box>
+        <Card sx={{ height: "100%" }}>
+            <CardContent sx={{ p: 2 }}>
+                <SectionHeader title="Blood Pressure" />
                 <Box
                     sx={{
                         display: "flex",
                         alignItems: "baseline",
                         justifyContent: "center",
                         gap: 1,
-                        mt: 3.5,
-                        mb: 1,
+                        mt: 2,
+                        mb: 0.5,
                     }}
                 >
                     <Typography
-                        variant="h2"
                         component="span"
-                        sx={{ color: "primary.main", fontSize: { xs: 64, md: 80 } }}
+                        sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
                     >
                         {reading.systolic}
                     </Typography>
                     <Typography
-                        variant="h4"
                         component="span"
-                        sx={{ color: "text.secondary", fontWeight: 300 }}
+                        sx={{ color: "#999999", fontSize: 32, fontWeight: 300 }}
                     >
                         /
                     </Typography>
                     <Typography
-                        variant="h2"
                         component="span"
-                        sx={{ color: "secondary.main", fontSize: { xs: 64, md: 80 } }}
+                        sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
                     >
                         {reading.diastolic}
                     </Typography>
                 </Box>
                 <Typography
-                    variant="caption"
                     sx={{
                         display: "block",
                         textAlign: "center",
-                        fontFamily: MONO,
-                        color: "text.secondary",
-                        mb: 1,
+                        fontSize: 11,
+                        color: "#777777",
+                        mb: 1.5,
                     }}
                 >
-                    mmHg · sys / dia
+                    mmHg (systolic / diastolic)
                 </Typography>
-                <Divider sx={{ my: 2, borderStyle: "dashed" }} />
-                <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-                    <Stat label="Heart rate" value={`${reading.hr}`} unit="bpm" />
-                    <Stat label="Updated" value={reading.timestamp} />
+                <Box
+                    sx={{
+                        textAlign: "center",
+                        py: 0.5,
+                        mb: 1.5,
+                        bgcolor: TONE_BG[status.tone],
+                        color: TONE_FG[status.tone],
+                        border: `1px solid ${TONE_BORDER[status.tone]}`,
+                        borderRadius: "3px",
+                        fontSize: 12,
+                    }}
+                >
+                    Status: {status.label}
+                </Box>
+                <Box
+                    sx={{
+                        borderTop: "1px solid #eeeeee",
+                        pt: 1,
+                    }}
+                >
+                    <SectionHeader title="Heart Rate" />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "baseline",
+                            justifyContent: "center",
+                            gap: 1,
+                            mt: 2,
+                            mb: 0.5,
+                        }}
+                    >
+                        <Typography
+                            component="span"
+                            sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
+                        >
+                            {reading.hr}
+                        </Typography>
+                    </Box>
+                    <Typography
+                        sx={{
+                            display: "block",
+                            textAlign: "center",
+                            fontSize: 11,
+                            color: "#777777",
+                        }}
+                    >
+                        bpm
+                    </Typography>
                 </Box>
             </CardContent>
         </Card>
     );
 };
-
-const Stat: React.FC<{ label: string; value: string; unit?: string }> = ({ label, value, unit }) => (
-    <Box sx={{ textAlign: "center" }}>
-        <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ display: "block", fontFamily: MONO, textTransform: "uppercase" }}
-        >
-            {label}
-        </Typography>
-        <Typography variant="body1" sx={{ fontWeight: 700, fontFamily: MONO, mt: 0.5 }}>
-            {value}
-            {unit && (
-                <Box component="span" sx={{ ml: 0.5, fontSize: 11, color: "text.secondary" }}>
-                    {unit}
-                </Box>
-            )}
-        </Typography>
-    </Box>
-);
 
 export default BloodPressureCard;

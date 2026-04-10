@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, Card, CardContent, Typography, useTheme } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import SectionHeader from "./SectionHeader";
-import { MONO } from "../theme";
 
 type History = {
     times: string[];
@@ -11,55 +10,55 @@ type History = {
     diastolic: number[];
 };
 
+const SYS_COLOR = "#337ab7";
+const DIA_COLOR = "#f0ad4e";
+
 const BPHistoryCard: React.FC<{ history: History }> = ({ history }) => {
-    const theme = useTheme();
     return (
         <Card sx={{ height: "100%" }}>
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: 2 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <SectionHeader
-                        index="03"
-                        icon={<ShowChartIcon fontSize="small" />}
-                        title="BP History"
-                    />
-                    <Box sx={{ display: "flex", gap: 1.5 }}>
-                        <LegendDot color={theme.palette.primary.main} label="SYS" />
-                        <LegendDot color={theme.palette.secondary.main} label="DIA" />
+                    <Box sx={{ flexGrow: 1 }}>
+                        <SectionHeader
+                            icon={<ShowChartIcon sx={{ fontSize: 16 }} />}
+                            title="Blood Pressure History"
+                        />
                     </Box>
                 </Box>
-                <Box sx={{ mt: 1 }}>
+                <Box sx={{ display: "flex", gap: 2, mb: 1, ml: 0.5 }}>
+                    <LegendDot color={SYS_COLOR} label="Systolic" />
+                    <LegendDot color={DIA_COLOR} label="Diastolic" />
+                </Box>
+                <Box>
                     <LineChart
-                        height={260}
-                        margin={{ left: 50, right: 20, top: 20, bottom: 30 }}
+                        height={240}
+                        margin={{ left: 50, right: 20, top: 10, bottom: 30 }}
                         xAxis={[{ scaleType: "point", data: history.times }]}
                         series={[
                             {
                                 data: history.systolic,
                                 label: "Systolic",
-                                color: theme.palette.primary.main,
-                                curve: "monotoneX",
+                                color: SYS_COLOR,
                                 showMark: true,
                             },
                             {
                                 data: history.diastolic,
                                 label: "Diastolic",
-                                color: theme.palette.secondary.main,
-                                curve: "monotoneX",
+                                color: DIA_COLOR,
                                 showMark: true,
                             },
                         ]}
                         slotProps={{ legend: { hidden: true } as never }}
                         sx={{
                             "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": {
-                                stroke: "#1a1a1a",
+                                stroke: "#cccccc",
                             },
                             "& .MuiChartsAxis-tickLabel": {
-                                fill: "#6b6b6b",
-                                fontFamily: MONO,
+                                fill: "#777777",
                                 fontSize: 11,
                             },
                             "& .MuiLineElement-root": {
-                                strokeWidth: 2,
+                                strokeWidth: 1.5,
                             },
                         }}
                     />
@@ -70,14 +69,9 @@ const BPHistoryCard: React.FC<{ history: History }> = ({ history }) => {
 };
 
 const LegendDot: React.FC<{ color: string; label: string }> = ({ color, label }) => (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-        <Box sx={{ width: 10, height: 10, bgcolor: color, border: "1.5px solid #1a1a1a" }} />
-        <Typography
-            variant="caption"
-            sx={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: "text.primary" }}
-        >
-            {label}
-        </Typography>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+        <Box sx={{ width: 10, height: 10, bgcolor: color, borderRadius: "50%" }} />
+        <Typography sx={{ fontSize: 11, color: "#555555" }}>{label}</Typography>
     </Box>
 );
 

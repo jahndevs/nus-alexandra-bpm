@@ -1,51 +1,56 @@
 import { createTheme } from "@mui/material";
 
-export const MONO = '"JetBrains Mono", ui-monospace, Consolas, monospace';
+// Kept as a no-op alias so existing imports keep working.
+// In the flat 2015-era look we just use the regular sans-serif everywhere.
+export const MONO = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 export const theme = createTheme({
     palette: {
         mode: "light",
-        primary: { main: "#1d4ed8", light: "#3b82f6", dark: "#1e3a8a" },   // blue (systolic)
-        secondary: { main: "#ea580c", light: "#fb923c", dark: "#9a3412" }, // orange (diastolic)
+        primary: { main: "#337ab7", light: "#5bc0de", dark: "#286090" },   // bootstrap 3 blue
+        secondary: { main: "#f0ad4e", light: "#f7c171", dark: "#ec971f" }, // bootstrap 3 warning
         background: {
-            default: "#f4f4f1", // warm paper gray
+            default: "#f5f5f5",
             paper: "#ffffff",
         },
         text: {
-            primary: "#1a1a1a",
-            secondary: "#6b6b6b",
+            primary: "#333333",
+            secondary: "#777777",
         },
-        divider: "#1a1a1a",
-        success: { main: "#15803d" },
-        warning: { main: "#c2410c" },
-        error: { main: "#b91c1c" },
+        divider: "#dddddd",
+        success: { main: "#5cb85c" },
+        warning: { main: "#f0ad4e" },
+        error: { main: "#d9534f" },
     },
-    shape: { borderRadius: 0 },
+    shape: { borderRadius: 3 },
     typography: {
-        fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-        h2: { fontWeight: 800, letterSpacing: "-0.04em", fontFeatureSettings: '"tnum"' },
-        h4: { fontWeight: 700, letterSpacing: "-0.02em" },
-        h5: { fontWeight: 700, letterSpacing: "-0.01em" },
+        fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        fontSize: 13,
+        h2: { fontWeight: 400, letterSpacing: 0 },
+        h4: { fontWeight: 400, letterSpacing: 0 },
+        h5: { fontWeight: 500, letterSpacing: 0, fontSize: 16 },
+        h6: { fontWeight: 500, letterSpacing: 0, fontSize: 15 },
         overline: {
-            letterSpacing: "0.18em",
+            letterSpacing: "0.04em",
             fontWeight: 700,
-            fontSize: 11,
-            fontFamily: MONO,
+            fontSize: 12,
+            textTransform: "uppercase",
         },
         caption: {
-            fontFamily: MONO,
-            letterSpacing: "0.06em",
+            fontSize: 12,
+            letterSpacing: 0,
+        },
+        button: {
+            textTransform: "none",
+            fontWeight: 400,
         },
     },
     components: {
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
-                    backgroundColor: "#f4f4f1",
-                    backgroundImage:
-                        "linear-gradient(#e8e8e3 1px, transparent 1px), linear-gradient(90deg, #e8e8e3 1px, transparent 1px)",
-                    backgroundSize: "32px 32px",
-                    backgroundPosition: "-1px -1px",
+                    backgroundColor: "#f5f5f5",
+                    backgroundImage: "none",
                 },
             },
         },
@@ -53,9 +58,9 @@ export const theme = createTheme({
             styleOverrides: {
                 root: {
                     backgroundColor: "#ffffff",
-                    border: "1.5px solid #1a1a1a",
-                    boxShadow: "6px 6px 0 0 #1a1a1a",
-                    borderRadius: 0,
+                    border: "1px solid #dddddd",
+                    boxShadow: "none",
+                    borderRadius: 3,
                     backgroundImage: "none",
                 },
             },
@@ -63,9 +68,9 @@ export const theme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: "#ffffff",
-                    color: "#1a1a1a",
-                    borderBottom: "1.5px solid #1a1a1a",
+                    backgroundColor: "#2c3e50",
+                    color: "#ffffff",
+                    borderBottom: "1px solid #1f2d3d",
                     boxShadow: "none",
                     backgroundImage: "none",
                 },
@@ -74,29 +79,38 @@ export const theme = createTheme({
         MuiChip: {
             styleOverrides: {
                 root: {
-                    borderRadius: 0,
-                    border: "1.5px solid #1a1a1a",
-                    fontFamily: MONO,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
+                    borderRadius: 3,
+                    border: "1px solid #cccccc",
+                    fontWeight: 400,
+                    letterSpacing: 0,
+                    textTransform: "none",
+                    height: 22,
+                    fontSize: 11,
                 },
                 outlined: {
-                    backgroundColor: "#fff",
+                    backgroundColor: "#ffffff",
                 },
             },
         },
         MuiAvatar: {
             styleOverrides: {
                 root: {
-                    border: "1.5px solid #1a1a1a",
-                    borderRadius: 0,
+                    border: "none",
+                    borderRadius: "50%",
                 },
             },
         },
         MuiDivider: {
             styleOverrides: {
                 root: {
-                    borderColor: "#1a1a1a",
+                    borderColor: "#eeeeee",
+                },
+            },
+        },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: "none",
                 },
             },
         },
