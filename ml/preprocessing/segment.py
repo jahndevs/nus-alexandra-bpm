@@ -1,14 +1,14 @@
 import numpy as np
 from scipy.signal import find_peaks
+# python3 ml_pipeline.py --anchor --calibrate 1
 
-# split preprocessed PPG signal into individual beats
+# split preprocessed PPG signal into individual beats (foot-to-foot)
 def split_beats(ppg, fs, min_bpm=40, max_bpm=200):
-    # systolic peaks
     min_distance = int(fs * 60 / max_bpm)
-    peaks, _ = find_peaks(ppg, distance=min_distance)
+    prom = 0.3 * np.std(ppg)
 
-    # troughs of the signal 
-    feet, _ = find_peaks(-ppg, distance=min_distance)
+    peaks, _ = find_peaks(ppg, distance=min_distance, prominence=prom)
+    feet, _ = find_peaks(-ppg, distance=min_distance, prominence=prom)
 
     result = []
     max_len = int(fs * 60 / min_bpm)
@@ -17,8 +17,10 @@ def split_beats(ppg, fs, min_bpm=40, max_bpm=200):
     for start, end in zip(feet[:-1], feet[1:]):
         if not (min_len <= end - start <= max_len):
             continue
-        if not np.any((peaks > start) & (peaks < end)):
+        # require exactly one systolic peak between the two feet
+        between = peaks[(peaks > start) & (peaks < end)]
+        if len(between) != 1:
             continue
         result.append(ppg[start:end])
-    
+
     return result

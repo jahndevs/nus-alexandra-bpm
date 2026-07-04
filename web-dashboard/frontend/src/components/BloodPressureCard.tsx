@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import SectionHeader from "./SectionHeader";
+import { RoundaboutLeftSharp } from "@mui/icons-material";
 
 type BPReading = {
     systolic: number;
@@ -8,6 +9,9 @@ type BPReading = {
     hr: number;
     timestamp: string;
 };
+
+const WS_URL = "ws://localhost:8765";
+const RECONNECT_DELAY = 2000;
 
 const classifyBP = (sys: number, dia: number) => {
     if (sys >= 140 || dia >= 90) return { label: "High", tone: "error" as const };
@@ -19,8 +23,97 @@ const TONE_BG = { success: "#dff0d8", warning: "#fcf8e3", error: "#f2dede" };
 const TONE_FG = { success: "#3c763d", warning: "#8a6d3b", error: "#a94442" };
 const TONE_BORDER = { success: "#d6e9c6", warning: "#faebcc", error: "#ebccd1" };
 
+const PPG_LOW_THRESHOLD = 1000;
+const OFF_WRIST_MS = 3000;
+
 const BloodPressureCard: React.FC<{ reading: BPReading }> = ({ reading }) => {
-    const status = classifyBP(reading.systolic, reading.diastolic);
+    const [live, setLive] = useState<{ sbp?: number; dbp?: number; hr?: number }>({});
+    const [detected, setDetected] = useState(true);
+    const wsRef = useRef<WebSocket | null>(null);
+    const reconnectRef = useRef<number | null>(null);
+    const closedRef = useRef(false);
+    const lowSinceRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        closedRef.current = false;
+        const connect = () => {
+            const ws = new WebSocket(WS_URL);
+            wsRef.current = ws;
+
+            ws.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+
+                    // off-wrist detection from raw PPG samples
+                    if (msg.type === "ppg" && typeof msg.raw === "number") {
+                        const now = Date.now();
+                        if (msg.raw < PPG_LOW_THRESHOLD) {
+                            if (lowSinceRef.current === null) lowSinceRef.current = now;
+                            if (now - lowSinceRef.current >= OFF_WRIST_MS) setDetected(false);
+                        } else {
+                            lowSinceRef.current = null;
+                            setDetected(true);
+                        }
+                    }
+
+                    if (msg.type !== "bp") return;
+                    setLive((prev) => ({
+                        sbp: typeof msg.sbp === "number" ? msg.sbp : prev.sbp,
+                        dbp: typeof msg.dbp === "number" ? msg.dbp : prev.dbp,
+                        hr: typeof msg.hr === "number" ? msg.hr : prev.hr,
+                    }));
+                } catch {}
+            };
+
+            ws.onclose = () => {
+                if (closedRef.current) return;
+                reconnectRef.current = window.setTimeout(connect, RECONNECT_DELAY);
+            };
+
+            ws.onerror = () => {
+                ws.close();
+            };
+        };
+
+        connect();
+
+        return () => {
+            closedRef.current = true;
+            if (reconnectRef.current !== null) window.clearTimeout(reconnectRef.current);
+            wsRef.current?.close();
+        };
+    }, []);
+
+    const systolic = live.sbp !== undefined ? Math.round(live.sbp) : reading.systolic;
+    const diastolic = live.dbp !== undefined ? Math.round(live.dbp) : reading.diastolic;
+    const hr = live.hr !== undefined ? Math.round(live.hr) : reading.hr;
+    const status = classifyBP(systolic, diastolic);
+
+    if (!detected) {
+        return (
+            <Card sx={{ height: "100%" }}>
+                <CardContent sx={{ p: 2 }}>
+                    <SectionHeader title="Blood Pressure" />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            py: 6,
+                            color: "#999",
+                        }}
+                    >
+                        <Typography sx={{ fontSize: 40, mb: 1 }}>--/--</Typography>
+                        <Typography sx={{ fontSize: 13 }}>
+                            No human detected
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Card>
+        );
+    }
+
     return (
         <Card sx={{ height: "100%" }}>
             <CardContent sx={{ p: 2 }}>
@@ -39,7 +132,7 @@ const BloodPressureCard: React.FC<{ reading: BPReading }> = ({ reading }) => {
                         component="span"
                         sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
                     >
-                        {reading.systolic}
+                        {systolic}
                     </Typography>
                     <Typography
                         component="span"
@@ -51,7 +144,7 @@ const BloodPressureCard: React.FC<{ reading: BPReading }> = ({ reading }) => {
                         component="span"
                         sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
                     >
-                        {reading.diastolic}
+                        {diastolic}
                     </Typography>
                 </Box>
                 <Typography
@@ -100,7 +193,7 @@ const BloodPressureCard: React.FC<{ reading: BPReading }> = ({ reading }) => {
                             component="span"
                             sx={{ color: "#333333", fontSize: 56, fontWeight: 300, lineHeight: 1 }}
                         >
-                            {reading.hr}
+                            {Math.round(hr / 2.3)}
                         </Typography>
                     </Box>
                     <Typography

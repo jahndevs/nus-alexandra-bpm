@@ -3,14 +3,14 @@ export const patient = {
     age: 21,
     sex: "M",
     id: "0001",
-    height: "165 cm",
-    weight: "68 kg",
+    height: "183 cm",
+    weight: "86 kg",
 };
 
 export const currentBP = {
-    systolic: 122,
-    diastolic: 78,
-    hr: 74,
+    systolic: 0,
+    diastolic: 0,
+    hr: 0,
     timestamp: "12:04:31",
 };
 

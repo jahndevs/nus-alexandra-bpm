@@ -1,34 +1,49 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import SectionHeader from "./SectionHeader";
 
 const PPG_COLOR = "#e74c3c";
-const POLL_INTERVAL = 100;
+const WS_URL = "ws://localhost:8765";
+const RECONNECT_DELAY = 2000;
 
 const PPGChartCard: React.FC = () => {
     const [values, setValues] = useState<number[]>([]);
-    const intervalRef = useRef<number | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
+    const reconnectRef = useRef<number | null>(null);
+    const closedRef = useRef(false);
 
     useEffect(() => {
-        const fetchBuffer = () => {
-            axios
-                .get("/api/ppg/buffer")
-                .then((res) => {
-                    const buf: number[] = res.data.values;
-                    if (buf.length > 0) {
-                        setValues(buf);
+        closedRef.current = false;
+        const connect = () => {
+            const ws = new WebSocket(WS_URL);
+            wsRef.current = ws;
+
+            ws.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    if (Array.isArray(msg.buffer)) {
+                        setValues(msg.buffer);
                     }
-                })
-                .catch(() => {});
+                } catch {}
+            };
+
+            ws.onclose = () => {
+                if (closedRef.current) return;
+                reconnectRef.current = window.setTimeout(connect, RECONNECT_DELAY);
+            };
+
+            ws.onerror = () => {
+                ws.close();
+            };
         };
 
-        fetchBuffer();
-        intervalRef.current = window.setInterval(fetchBuffer, POLL_INTERVAL);
+        connect();
 
         return () => {
-            if (intervalRef.current !== null) window.clearInterval(intervalRef.current);
+            closedRef.current = true;
+            if (reconnectRef.current !== null) window.clearTimeout(reconnectRef.current);
+            wsRef.current?.close();
         };
     }, []);
 
